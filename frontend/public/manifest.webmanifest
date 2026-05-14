@@ -1,0 +1,17 @@
+{
+  "name": "NowHere",
+  "short_name": "NowHere",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f766e",
+  "description": "Context-aware recommendation app for deciding where to go next.",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

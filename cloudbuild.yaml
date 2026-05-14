@@ -1,0 +1,52 @@
+substitutions:
+  _REGION: asia-southeast2
+  _SERVICE_NAME: nowhere
+  _REPOSITORY: cloud-run
+  _IMAGE_NAME: nowhere
+  _SERVICE_ACCOUNT: rejectme-cloud-run@rejectme-jvbc-zidan.iam.gserviceaccount.com
+  _GOOGLE_CLOUD_LOCATION: us-central1
+  _GEMINI_MODEL: gemini-2.5-flash-lite
+  _NOWHERE_ALLOW_DEMO_FALLBACK: "false"
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - backend/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE_NAME}
+      - --image
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID
+      - --region
+      - ${_REGION}
+      - --platform
+      - managed
+      - --service-account
+      - ${_SERVICE_ACCOUNT}
+      - --memory
+      - 512Mi
+      - --cpu
+      - "1"
+      - --min-instances
+      - "0"
+      - --max-instances
+      - "2"
+      - --set-env-vars
+      - GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=${_GOOGLE_CLOUD_LOCATION},GEMINI_MODEL=${_GEMINI_MODEL},NOWHERE_ALLOW_DEMO_FALLBACK=${_NOWHERE_ALLOW_DEMO_FALLBACK}
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID

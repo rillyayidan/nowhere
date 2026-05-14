@@ -1,0 +1,15 @@
+.git
+.gitignore
+.gcloudignore
+
+frontend/node_modules/
+frontend/dist/
+frontend/*.log
+
+backend/*.exe
+backend/*.log
+backend/.env
+backend/.env.local
+
+.env
+.env.local
